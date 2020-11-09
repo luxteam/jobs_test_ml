@@ -1,0 +1,18 @@
+
+<?xml version="1.0" ?>
+<job-manifest enable="False">
+
+    <outpath value="{OutputDir}"/>
+
+    <execute command='python "{ResourcesDir}/measurePerformance.py"'>
+        <argument>--rmlTool "{RMLTool}"</argument>
+        <argument>--winmlTool "{WinMLTool}"</argument>
+        <argument>--tensorrtTool "{TensorRTTool}"</argument>
+        <argument>--output "{OutputDir}"</argument>
+        <argument>--testType ResNetPerformance</argument>
+        <argument>--res_path "{ScenesDir}"/ResNet</argument>
+        <argument>--data_path "{ScenesDir}"/Data</argument>
+        <argument>--testCases "{TestCases}"</argument>
+    </execute>
+
+</job-manifest>
