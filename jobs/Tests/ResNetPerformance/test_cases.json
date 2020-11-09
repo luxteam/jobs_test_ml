@@ -5,8 +5,8 @@
         "onnx": "resnet50v1f32.onnx",
         "bin": "3x224x224.bin",
         "csv": "3x224x224.csv",
-        "cmd_line_rml": "test_app.exe -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,224,224,3 -t float32",
-        "cmd_line_winml": "WinMLRunner.exe -model r{onnx_path} -Input {csv_path} -Tensor -Perf",
-        "cmd_line_tensorrt": "trtexec.exe --onnx={onnx_path} --loadInputs={csv_path}"
+        "cmd_line_rml": "{tool_path} -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,224,224,3 -t float32",
+        "cmd_line_winml": "{tool_path} -model {onnx_path} -Input {csv_path} -Tensor -Perf",
+        "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     }
 ]

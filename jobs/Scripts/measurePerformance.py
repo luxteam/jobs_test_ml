@@ -31,11 +31,7 @@ def createArgsParser():
     return parser
 
 
-def execute_case(args, cmd_script, cmd_script_path, tool):
-    os.chdir(args.output)
-    p = psutil.Popen(cmdScriptPath, shell=True,
-                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
+def execute_case(args, case, tool, cmd_script, cmd_script_path):
     try:
         with open(cmd_script_path, 'w') as f:
             f.write(cmd_script)
@@ -45,9 +41,12 @@ def execute_case(args, cmd_script, cmd_script_path, tool):
 
     except OSError as err:
         core_config.main_logger.error('Can\'t save run scripts: {}'.format(str(err)))
-        continue
 
     status = 'error'
+
+    os.chdir(args.output)
+    p = psutil.Popen(cmd_script_path, shell=True,
+                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
     try:
         stdout, stderr = p.communicate(timeout=float(args.timeout))
@@ -59,10 +58,10 @@ def execute_case(args, cmd_script, cmd_script_path, tool):
         p.terminate()
     finally:
         status_name = 'test_status_{}'.format(tool)
-        with open(os.path.join(args.output, scene_name + CASE_REPORT_SUFFIX), 'r') as f:
+        with open(os.path.join(args.output, case['case'] + core_config.CASE_REPORT_SUFFIX), 'r') as f:
             report = json.load(f)
 
-        with open('{}_{}.log'.format(scene_name.replace(' ', '_'), tool), 'w', encoding='utf-8') as file:
+        with open('{}_{}.log'.format(case['case'].replace(', ', '_').replace(' ', '_'), tool), 'w', encoding='utf-8') as file:
             stdout = stdout.decode('utf-8')
             file.write(stdout)
             file.write('\n ----STEDERR---- \n')
@@ -70,8 +69,8 @@ def execute_case(args, cmd_script, cmd_script_path, tool):
             file.write(stderr)
 
         if status_name != 'skipped':
-            report[status_name] = status
-            with open(os.path.join(args.output, scene_name + CASE_REPORT_SUFFIX), 'w') as f:
+            report[0][status_name] = status
+            with open(os.path.join(args.output, case['case'] + core_config.CASE_REPORT_SUFFIX), 'w') as f:
                 json.dump(report, f, indent=4)
 
 
@@ -106,8 +105,13 @@ if __name__ == '__main__':
         group_failed(args)
         exit(-1)
 
+    gpu = get_gpu()
+    if not gpu:
+        core_config.main_logger.error("Can't get gpu name")
+    render_platform = {platform.system(), gpu}
+
     for case in cases:
-        if is_case_skipped(case, render_platform, args.engine):
+        if is_case_skipped(case, render_platform):
             case['status'] = 'skipped'
 
         template = {}
@@ -134,28 +138,28 @@ if __name__ == '__main__':
             if args.tensorrtTool:
                 template['test_status_tensorrt'] = 'error'
 
-        with open(os.path.join(work_dir, case['case'] + core_config.CASE_REPORT_SUFFIX), 'w') as f:
+        with open(os.path.join(args.output, case['case'] + core_config.CASE_REPORT_SUFFIX), 'w') as f:
             f.write(json.dumps([template], indent=4))
 
     for case in cases:
         onnx_path = os.path.join(args.res_path, case['onnx']).replace('/', os.path.sep)
-        csv_path = os.path.join(args.data_path, case['bin']).replace('/', os.path.sep)
-        bin_path = os.path.join(args.data_path, case['csv']).replace('/', os.path.sep)
+        csv_path = os.path.join(args.data_path, case['csv']).replace('/', os.path.sep)
+        bin_path = os.path.join(args.data_path, case['bin']).replace('/', os.path.sep)
 
         if args.rmlTool:
             cmd_line = case['cmd_line_rml']
-            cmd_script = script.format(onnx=onnx_path, bin_path=bin_path)
-            cmd_script_path = os.path.join(args.output, '{}_rml.bat'.format(scene_name.replace(' ', '_')))
-            execute_case(args, cmd_script, cmd_script_path, 'rml')
+            cmd_script = cmd_line.format(tool_path=os.path.abspath(args.rmlTool), onnx_path=onnx_path, bin_path=bin_path)
+            cmd_script_path = os.path.join(args.output, '{}_rml.bat'.format(case['case'].replace(', ', '_').replace(' ', '_')))
+            execute_case(args, case, 'rml', cmd_script, cmd_script_path)
         if args.winmlTool:
             cmd_line = case['cmd_line_winml']
-            cmd_script = script.format(onnx=onnx_path, csv_path=csv_path)
-            cmd_script_path = os.path.join(args.output, '{}_rml.bat'.format(scene_name.replace(' ', '_')))
-            execute_case(args, cmd_script, cmd_script_path, 'winml')
+            cmd_script = cmd_line.format(tool_path=args.winmlTool, onnx_path=onnx_path, csv_path=csv_path)
+            cmd_script_path = os.path.join(args.output, '{}winml.bat'.format(case['case'].replace(', ', '_').replace(' ', '_')))
+            execute_case(args, case, 'winml', cmd_script, cmd_script_path)
         if args.tensorrtTool:
             cmd_line = case['cmd_line_tensorrt']
-            cmd_script = script.format(onnx=onnx_path, csv_path=csv_path)
-            cmd_script_path = os.path.join(args.output, '{}_rml.bat'.format(scene_name.replace(' ', '_')))
-            execute_case(args, cmd_script, cmd_script_path, 'tensorrt')
+            cmd_script = cmd_line.format(tool_path=args.tensorrtTool, onnx_path=onnx_path, csv_path=csv_path)
+            cmd_script_path = os.path.join(args.output, '{}tensorrt.bat'.format(case['case'].replace(', ', '_').replace(' ', '_')))
+            execute_case(args, case, 'tensorrt', cmd_script, cmd_script_path)
 
     exit(0)
