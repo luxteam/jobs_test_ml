@@ -3,8 +3,8 @@
         "case": "Upscale, 640x800, float32",
         "status": "active",
         "onnx": "upscale2x_c3_rt_640x800f32.onnx",
-        "bin": "3x640x800.bin",
-        "csv": "3x640x800.csv",
+        "bin": "640x800x3.bin",
+        "csv": "640x800x3.csv",
         "cmd_line_rml": "{tool_path} -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,640,800,3 -t float32",
         "cmd_line_winml": "{tool_path} -model {onnx_path} -Input {csv_path} -Tensor -Perf",
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
@@ -13,8 +13,8 @@
         "case": "Upscale, 1040x1920, float32",
         "status": "active",
         "onnx": "upscale2x_c3_rt_1040x1920f32.onnx",
-        "bin": "3x1040x1920.bin",
-        "csv": "3x1040x1920.csv",
+        "bin": "1040x1920x3.bin",
+        "csv": "1040x1920x3.csv",
         "cmd_line_rml": "{tool_path} -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,1040,1920,3 -t float32",
         "cmd_line_winml": "{tool_path} -model {onnx_path} -Input {csv_path} -Tensor -Perf",
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
@@ -23,8 +23,8 @@
         "case": "Upscale , 640x800, float16",
         "status": "active",
         "onnx": "upscale2x_c3_rt_640x800f16.onnx",
-        "bin": "3x640x800.bin",
-        "csv": "3x640x800.csv",
+        "bin": "640x800x3.bin",
+        "csv": "640x800x3.csv",
         "cmd_line_rml": "{tool_path} -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,640,800,3 -t float16",
         "cmd_line_winml": "{tool_path} -model {onnx_path} -Input {csv_path} -Tensor -Perf",
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
@@ -33,8 +33,8 @@
         "case": "Upscale, 1040x1920, float16",
         "status": "active",
         "onnx": "upscale2x_c3_rt_1040x1920f16.onnx",
-        "bin": "3x1040x1920.bin",
-        "csv": "3x1040x1920.csv",
+        "bin": "1040x1920x3.bin",
+        "csv": "1040x1920x3.csv",
         "cmd_line_rml": "{tool_path} -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,1040,1920,3 -t float16",
         "cmd_line_winml": "{tool_path} -model {onnx_path} -Input {csv_path} -Tensor -Perf",
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
