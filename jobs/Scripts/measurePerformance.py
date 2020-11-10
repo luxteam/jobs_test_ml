@@ -21,9 +21,9 @@ from jobs_launcher.core.system_info import get_gpu
 def createArgsParser():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--rmlTool', metavar='<rml_path>')
-    parser.add_argument('--winmlTool', metavar='<winml_path>')
-    parser.add_argument('--tensorrtTool', metavar='<tensorrt_path>')
+    parser.add_argument('--rmlTool', required=True, metavar='<rml_path>')
+    parser.add_argument('--winmlTool', required=True, metavar='<winml_path>')
+    parser.add_argument('--tensorrtTool', required=True, metavar='<tensorrt_path>')
     parser.add_argument('--output', required=True, metavar='<output_dir>')
     parser.add_argument('--testType', required=True)
     parser.add_argument('--res_path', required=True)
@@ -81,14 +81,14 @@ def execute_case(args, case, tool, cmd_script, cmd_script_path):
         for thread in (stdout_thread, stderr_thread):
             thread.join()
         queue.put(None)
-        status_name = 'test_status_{}'.format(tool)
-        with open(os.path.join(args.output, case['case'] + core_config.CASE_REPORT_SUFFIX), 'r') as f:
+
+        json_name = '{}_{}{}'.format(case['case'].replace(', ', '_').replace(' ', '_'), tool, core_config.CASE_REPORT_SUFFIX)
+        with open(os.path.join(args.output, json_name), 'r') as f:
             report = json.load(f)
 
-        if status_name != 'skipped':
-            report[0][status_name] = status
-            with open(os.path.join(args.output, case['case'] + core_config.CASE_REPORT_SUFFIX), 'w') as f:
-                json.dump(report, f, indent=4)
+        report[0]['test_status'] = status
+        with open(os.path.join(args.output, json_name), 'w') as f:
+            json.dump(report, f, indent=4)
 
     outs = ' '.join(outs)
     errs = ' '.join(errs)
@@ -137,56 +137,53 @@ if __name__ == '__main__':
     for case in cases:
         if is_case_skipped(case, render_platform):
             case['status'] = 'skipped'
+        else:
+            case['status'] = 'active'
 
         template = {}
-        template['test_case'] = case['case']
         template['render_device'] = get_gpu()
         template['onnx'] = case['onnx']
-        template['onnx'] = case['bin']
-        template['onnx'] = case['csv']
         template['test_group'] = args.testType
         template['date_time'] = datetime.now().strftime(
             '%m/%d/%Y %H:%M:%S')
         if case['status'] == 'skipped':
-            if args.rmlTool:
-                template['test_status_rml'] = 'skipped'
-            if args.winmlTool:
-                template['test_status_winml'] = 'skipped'
-            if args.tensorrtTool:
-                template['test_status_tensorrt'] = 'skipped'
+            template['test_status'] = 'skipped'
         else:
-            if args.rmlTool:
-                template['test_status_rml'] = 'error'
-            if args.winmlTool:
-                template['test_status_winml'] = 'error'
-            if args.tensorrtTool:
-                template['test_status_tensorrt'] = 'error'
+            template['test_status'] = 'error'
 
-        with open(os.path.join(args.output, case['case'] + core_config.CASE_REPORT_SUFFIX), 'w') as f:
-            f.write(json.dumps([template], indent=4))
+        for tool in ['rml', 'winml', 'tensorrt']:
+            template_copy = template.copy()
+            if tool == 'rml':
+                template_copy['bin'] = case['bin']
+            else:
+                template_copy['csv'] = case['csv']
+            template_copy['case'] = '{}, {}'.format(case['case'], tool)
+            case_name = template_copy['case'].replace(', ', '_').replace(' ', '_')
+            with open(os.path.join(args.output, case_name + core_config.CASE_REPORT_SUFFIX), 'w') as f:
+                f.write(json.dumps([template_copy], indent=4))
 
-    if args.rmlTool:
-        args.rmlTool = os.path.abspath(args.rmlTool)
+    args.rmlTool = os.path.abspath(args.rmlTool)
 
     for case in cases:
-        onnx_path = os.path.join(args.res_path, case['onnx']).replace('/', os.path.sep)
-        csv_path = os.path.join(args.data_path, case['csv']).replace('/', os.path.sep)
-        bin_path = os.path.join(args.data_path, case['bin']).replace('/', os.path.sep)
+        if case['status'] != 'skipped':
+            onnx_path = os.path.join(args.res_path, case['onnx']).replace('/', os.path.sep)
+            csv_path = os.path.join(args.data_path, case['csv']).replace('/', os.path.sep)
+            bin_path = os.path.join(args.data_path, case['bin']).replace('/', os.path.sep)
+            case_name = case['case'].replace(', ', '_').replace(' ', '_')
 
-        if args.rmlTool:
             cmd_line = case['cmd_line_rml']
             cmd_script = cmd_line.format(tool_path=args.rmlTool, onnx_path=onnx_path, bin_path=bin_path)
-            cmd_script_path = os.path.join(args.output, '{}_rml.bat'.format(case['case'].replace(', ', '_').replace(' ', '_')))
+            cmd_script_path = os.path.join(args.output, '{}_rml.bat'.format(case_name))
             execute_case(args, case, 'rml', cmd_script, cmd_script_path)
-        if args.winmlTool:
+
             cmd_line = case['cmd_line_winml']
             cmd_script = cmd_line.format(tool_path=args.winmlTool, onnx_path=onnx_path, csv_path=csv_path)
-            cmd_script_path = os.path.join(args.output, '{}winml.bat'.format(case['case'].replace(', ', '_').replace(' ', '_')))
+            cmd_script_path = os.path.join(args.output, '{}_winml.bat'.format(case_name))
             execute_case(args, case, 'winml', cmd_script, cmd_script_path)
-        if args.tensorrtTool:
+
             cmd_line = case['cmd_line_tensorrt']
             cmd_script = cmd_line.format(tool_path=args.tensorrtTool, onnx_path=onnx_path, csv_path=csv_path)
-            cmd_script_path = os.path.join(args.output, '{}tensorrt.bat'.format(case['case'].replace(', ', '_').replace(' ', '_')))
+            cmd_script_path = os.path.join(args.output, '{}_tensorrt.bat'.format(case_name))
             execute_case(args, case, 'tensorrt', cmd_script, cmd_script_path)
 
     exit(0)
