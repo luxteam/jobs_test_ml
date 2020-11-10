@@ -1,8 +1,8 @@
 [
     {
-        "case": "ResNetPerf v1, float32",
+        "case": "Inception v1, float32",
         "status": "active",
-        "onnx": "resnet50v1f32.onnx",
+        "onnx": "inception_v1_opset8f32.onnx",
         "bin": "3x224x224.bin",
         "csv": "3x224x224.csv",
         "cmd_line_rml": "{tool_path} -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,224,224,3 -t float32",
@@ -10,9 +10,9 @@
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     },
     {
-        "case": "ResNetPerf v2, float32",
+        "case": "Inception v2, float32",
         "status": "active",
-        "onnx": "resnet50v2f32.onnx",
+        "onnx": "inception_v2_opset8f32.onnx",
         "bin": "3x224x224.bin",
         "csv": "3x224x224.csv",
         "cmd_line_rml": "{tool_path} -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,224,224,3 -t float32",
@@ -20,9 +20,9 @@
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     },
     {
-        "case": "ResNetPerf v1, float16",
+        "case": "Inception v1, float16",
         "status": "active",
-        "onnx": "resnet50v1f16.onnx",
+        "onnx": "inception_v1_opset8f16.onnx",
         "bin": "3x224x224.bin",
         "csv": "3x224x224.csv",
         "cmd_line_rml": "{tool_path} -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,224,224,3 -t float16",
@@ -30,9 +30,9 @@
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     },
     {
-        "case": "ResNetPerf v2, float16",
+        "case": "Inception v2, float16",
         "status": "active",
-        "onnx": "resnet50v2f16.onnx",
+        "onnx": "inception_v2_opset8f16.onnx",
         "bin": "3x224x224.bin",
         "csv": "3x224x224.csv",
         "cmd_line_rml": "{tool_path} -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,224,224,3 -t float16",

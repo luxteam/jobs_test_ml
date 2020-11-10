@@ -8,8 +8,8 @@
         <argument>--winmlTool "{WinMLTool}"</argument>
         <argument>--tensorrtTool "{TensorRTTool}"</argument>
         <argument>--output "{OutputDir}"</argument>
-        <argument>--testType ResNetPerformance</argument>
-        <argument>--res_path "{ScenesDir}"/resnet</argument>
+        <argument>--testType DenoisePerformance</argument>
+        <argument>--res_path "{ScenesDir}"/denoise</argument>
         <argument>--data_path "{ScenesDir}"/data</argument>
         <argument>--testCases "{TestCases}"</argument>
     </execute>
