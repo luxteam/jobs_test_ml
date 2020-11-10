@@ -141,6 +141,9 @@ if __name__ == '__main__':
         with open(os.path.join(args.output, case['case'] + core_config.CASE_REPORT_SUFFIX), 'w') as f:
             f.write(json.dumps([template], indent=4))
 
+    if args.rmlTool:
+        args.rmlTool = os.path.abspath(args.rmlTool)
+
     for case in cases:
         onnx_path = os.path.join(args.res_path, case['onnx']).replace('/', os.path.sep)
         csv_path = os.path.join(args.data_path, case['csv']).replace('/', os.path.sep)
@@ -148,7 +151,7 @@ if __name__ == '__main__':
 
         if args.rmlTool:
             cmd_line = case['cmd_line_rml']
-            cmd_script = cmd_line.format(tool_path=os.path.abspath(args.rmlTool), onnx_path=onnx_path, bin_path=bin_path)
+            cmd_script = cmd_line.format(tool_path=args.rmlTool, onnx_path=onnx_path, bin_path=bin_path)
             cmd_script_path = os.path.join(args.output, '{}_rml.bat'.format(case['case'].replace(', ', '_').replace(' ', '_')))
             execute_case(args, case, 'rml', cmd_script, cmd_script_path)
         if args.winmlTool:
