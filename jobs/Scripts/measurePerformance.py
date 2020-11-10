@@ -8,6 +8,9 @@ from datetime import datetime
 from shutil import copyfile, move, which
 import sys
 from utils import is_case_skipped
+from queue import Queue
+from subprocess import PIPE, Popen
+from threading import Thread
 
 sys.path.append(os.path.abspath(os.path.join(
     os.path.dirname(__file__), os.path.pardir, os.path.pardir)))
@@ -26,9 +29,16 @@ def createArgsParser():
     parser.add_argument('--res_path', required=True)
     parser.add_argument('--data_path', required=True)
     parser.add_argument('--testCases', required=True)
-    parser.add_argument('--timeout', required=False, default=120)
+    parser.add_argument('--timeout', required=False, default=300)
 
     return parser
+
+
+def read_output(pipe, functions):
+    for line in iter(pipe.readline, b''):
+        for function in functions:
+            function(line.decode('utf-8'))
+    pipe.close()
 
 
 def execute_case(args, case, tool, cmd_script, cmd_script_path):
@@ -48,30 +58,44 @@ def execute_case(args, case, tool, cmd_script, cmd_script_path):
     p = psutil.Popen(cmd_script_path, shell=True,
                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
+    outs = []
+    errs = []
+    queue = Queue()
+
+    stdout_thread = Thread(target=read_output, args=(p.stdout, [queue.put, outs.append]))
+    stderr_thread = Thread(target=read_output, args=(p.stderr, [queue.put, errs.append]))
+
+    for thread in (stdout_thread, stderr_thread):
+        thread.daemon = True
+        thread.start()
+
     try:
-        stdout, stderr = p.communicate(timeout=float(args.timeout))
+        p.wait(timeout=args.timeout)
         status = 'passed'
     except (psutil.TimeoutExpired, subprocess.TimeoutExpired) as err:
-        core_config.main_logger.error('Test case has been aborted by timeout')
+        core_config.main_logger.error('Test case {} has been aborted by timeout'.format(case['case']))
         for child in reversed(p.children(recursive=True)):
             child.terminate()
         p.terminate()
     finally:
+        for thread in (stdout_thread, stderr_thread):
+            thread.join()
+        queue.put(None)
         status_name = 'test_status_{}'.format(tool)
         with open(os.path.join(args.output, case['case'] + core_config.CASE_REPORT_SUFFIX), 'r') as f:
             report = json.load(f)
-
-        with open('{}_{}.log'.format(case['case'].replace(', ', '_').replace(' ', '_'), tool), 'w', encoding='utf-8') as file:
-            stdout = stdout.decode('utf-8')
-            file.write(stdout)
-            file.write('\n ----STEDERR---- \n')
-            stderr = stderr.decode('utf-8')
-            file.write(stderr)
 
         if status_name != 'skipped':
             report[0][status_name] = status
             with open(os.path.join(args.output, case['case'] + core_config.CASE_REPORT_SUFFIX), 'w') as f:
                 json.dump(report, f, indent=4)
+
+    outs = ' '.join(outs)
+    errs = ' '.join(errs)
+
+    with open('{}_{}.log'.format(case['case'].replace(', ', '_').replace(' ', '_'), tool), 'w', encoding='utf-8') as file:
+        file.write(outs)
+        file.write(errs)
 
 
 if __name__ == '__main__':
