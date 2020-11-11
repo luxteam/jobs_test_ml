@@ -14,4 +14,8 @@
         <argument>--testCases "{TestCases}"</argument>
     </execute>
 
+    <execute command='python "{ResourcesDir}/makeReportPerformance.py"'>
+        <argument>--work_dir "{OutputDir}"</argument>
+    </execute>
+
 </job-manifest>
