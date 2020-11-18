@@ -1,6 +1,6 @@
 [
     {
-        "case": "VGG16, float32",
+        "case": "VGG16_float32",
         "status": "active",
         "onnx": "vgg16f32.onnx",
         "bin": "3x224x224.bin",
@@ -10,7 +10,7 @@
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     },
     {
-        "case": "VGG19, float32",
+        "case": "VGG19_float32",
         "status": "active",
         "onnx": "vgg19f32.onnx",
         "bin": "3x224x224.bin",
@@ -20,7 +20,7 @@
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     },
     {
-        "case": "VGG16, float16",
+        "case": "VGG16_float16",
         "status": "active",
         "onnx": "vgg16f16.onnx",
         "bin": "3x224x224_fp16.bin",
@@ -30,7 +30,7 @@
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     },
     {
-        "case": "VGG19, float16",
+        "case": "VGG19_float16",
         "status": "active",
         "onnx": "vgg19f16.onnx",
         "bin": "3x224x224_fp16.bin",

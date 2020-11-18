@@ -13,32 +13,37 @@ def generate_report(directory):
     json_files = list(filter(lambda x: x.endswith('RPR.json'), files))
     result_json = []
 
+    render_logs_path = os.path.join(directory, 'render_tool_logs')
+
     for file in json_files:
-        with open(os.path.join(directory, file), 'r') as json_report:
+        with open(os.path.join(render_logs_path, file), 'r') as json_report:
             data = json.load(json_report)[0]
 
         log_name = file.replace(CASE_REPORT_SUFFIX, '.log')
         time = None
-        with open(os.path.join(directory, log_name), 'r') as log_file:
+        lines = []
+        lines.append('--- {} ---'.format(log_name))
+        with open(os.path.join(render_logs_path, log_name), 'r') as log_file:
             log = log_file.readlines()
             is_gpu_section = False
             for line in log:
+                lines.append(line)
                 if 'rml' in log_name:
                     if 'Inference time' in line:
                         time = float(line.split(':')[1].replace('ms', ''))
-                        break
                 elif 'winml' in log_name:
                     if 'device = GPU' in line:
                         is_gpu_section = True
                     if is_gpu_section and 'Evaluate' in line:
                         time = float(line.split(':')[1].replace('ms', ''))
-                        break
                 elif 'tensorrt' in log_name:
                     if 'GPU Compute' in line:
                         is_gpu_section = True
                     if is_gpu_section and 'mean' in line:
                         time = float(line.split(':')[1].replace('ms', ''))
-                        break
+        lines.append('')
+        with open(os.path.join(directory, 'renderTool.log'), 'a') as log_file:
+            log.file.writelines(lines)
         if time is None:
             data['test_status'] = 'error'
         else:

@@ -1,6 +1,6 @@
 [
     {
-        "case": "MobileNet, float32",
+        "case": "MobileNet_float32",
         "status": "active",
         "onnx": "mobilenet_v2_1.0_224f32.onnx",
         "bin": "3x224x224.bin",
@@ -10,7 +10,7 @@
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     },
     {
-        "case": "MobileNet, float16",
+        "case": "MobileNet_float16",
         "status": "active",
         "onnx": "mobilenet_v2_1.0_224f16.onnx",
         "bin": "3x224x224_fp16.bin",

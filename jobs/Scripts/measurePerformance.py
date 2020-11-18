@@ -87,15 +87,19 @@ def execute_case(args, case, tool, cmd_script, cmd_script_path):
             report = json.load(f)
 
         report[0]['test_status'] = status
+        report[0]['testing_start'] = datetime.now().strftime(
+            '%m/%d/%Y %H:%M:%S')
+        log_path = os.path.join('render_tool_logs', '{}_{}.log'.format(case['case'].replace(', ', '_').replace(' ', '_'), tool))
+        report[0]['render_log'] = log_path
         with open(os.path.join(args.output, json_name), 'w') as f:
             json.dump(report, f, indent=4)
 
-    outs = ' '.join(outs)
-    errs = ' '.join(errs)
+        outs = ' '.join(outs)
+        errs = ' '.join(errs)
 
-    with open('{}_{}.log'.format(case['case'].replace(', ', '_').replace(' ', '_'), tool), 'w', encoding='utf-8') as file:
-        file.write(outs)
-        file.write(errs)
+        with open(log_path, 'w', encoding='utf-8') as file:
+            file.write(outs)
+            file.write(errs)
 
 
 if __name__ == '__main__':
@@ -142,6 +146,7 @@ if __name__ == '__main__':
 
         template = {}
         template['render_device'] = get_gpu()
+        template['render_time'] = 0
         template['onnx'] = case['onnx']
         template['test_group'] = args.testType
         template['date_time'] = datetime.now().strftime(
@@ -157,8 +162,9 @@ if __name__ == '__main__':
                 template_copy['bin'] = case['bin']
             else:
                 template_copy['csv'] = case['csv']
-            template_copy['case'] = '{}, {}'.format(case['case'], tool)
-            case_name = template_copy['case'].replace(', ', '_').replace(' ', '_')
+            template['tool'] = tool
+            template_copy['test_case'] = '{}, {}'.format(case['case'], tool)
+            case_name = template_copy['test_case'].replace(', ', '_').replace(' ', '_')
             with open(os.path.join(args.output, case_name + core_config.CASE_REPORT_SUFFIX), 'w') as f:
                 f.write(json.dumps([template_copy], indent=4))
 

@@ -1,6 +1,6 @@
 [
     {
-        "case": "Upscale, 640x800, float32",
+        "case": "Upscale_640x800_float32",
         "status": "active",
         "onnx": "upscale2x_c3_rt_640x800f32.onnx",
         "bin": "640x800x3.bin",
@@ -10,7 +10,7 @@
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     },
     {
-        "case": "Upscale, 1040x1920, float32",
+        "case": "Upscale_1040x1920_float32",
         "status": "active",
         "onnx": "upscale2x_c3_rt_1040x1920f32.onnx",
         "bin": "1040x1920x3.bin",
@@ -20,7 +20,7 @@
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     },
     {
-        "case": "Upscale , 640x800, float16",
+        "case": "Upscale_640x800_float16",
         "status": "active",
         "onnx": "upscale2x_c3_rt_640x800f16.onnx",
         "bin": "640x800x3_fp16.bin",
@@ -30,7 +30,7 @@
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     },
     {
-        "case": "Upscale, 1040x1920, float16",
+        "case": "Upscale_1040x1920_float16",
         "status": "active",
         "onnx": "upscale2x_c3_rt_1040x1920f16.onnx",
         "bin": "1040x1920x3_fp16.bin",
