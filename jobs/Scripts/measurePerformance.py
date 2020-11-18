@@ -91,6 +91,10 @@ def execute_case(args, case, tool, cmd_script, cmd_script_path):
             '%m/%d/%Y %H:%M:%S')
         log_path = os.path.join('render_tool_logs', '{}_{}.log'.format(case['case'].replace(', ', '_').replace(' ', '_'), tool))
         report[0]['render_log'] = log_path
+
+        if not os.path.exists('render_tool_logs'):
+            os.makedirs('render_tool_logs')
+
         with open(os.path.join(args.output, json_name), 'w') as f:
             json.dump(report, f, indent=4)
 
