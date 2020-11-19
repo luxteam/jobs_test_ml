@@ -166,7 +166,7 @@ if __name__ == '__main__':
                 template_copy['bin'] = case['bin']
             else:
                 template_copy['csv'] = case['csv']
-            template['tool'] = tool
+            template_copy['tool'] = tool
             template_copy['test_case'] = '{}, {}'.format(case['case'], tool)
             case_name = template_copy['test_case'].replace(', ', '_').replace(' ', '_')
             with open(os.path.join(args.output, case_name + core_config.CASE_REPORT_SUFFIX), 'w') as f:
