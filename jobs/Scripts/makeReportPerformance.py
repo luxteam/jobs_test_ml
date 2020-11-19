@@ -41,7 +41,7 @@ def generate_report(directory):
                             if 'GPU Compute' in line:
                                 is_gpu_section = True
                             if is_gpu_section and 'mean' in line:
-                                time = float(line.split(':')[1].replace('ms', ''))
+                                time = float(line.split(':')[3].replace('ms', ''))
         lines.append('')
         with open(os.path.join(directory, 'renderTool.log'), 'a') as log_file:
             log_file.writelines(lines)
