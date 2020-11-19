@@ -28,19 +28,20 @@ def generate_report(directory):
                 is_gpu_section = False
                 for line in log:
                     lines.append(line)
-                    if 'rml' in log_name:
-                        if 'Inference time' in line:
-                            time = float(line.split(':')[1].replace('ms', ''))
-                    elif 'winml' in log_name:
-                        if 'device = GPU' in line:
-                            is_gpu_section = True
-                        if is_gpu_section and 'Evaluate' in line:
-                            time = float(line.split(':')[1].replace('ms', ''))
-                    elif 'tensorrt' in log_name:
-                        if 'GPU Compute' in line:
-                            is_gpu_section = True
-                        if is_gpu_section and 'mean' in line:
-                            time = float(line.split(':')[1].replace('ms', ''))
+                    if not time:
+                        if 'rml' in log_name:
+                            if 'Inference time' in line:
+                                time = float(line.split(':')[1].replace('ms', ''))
+                        elif 'winml' in log_name:
+                            if 'device = GPU' in line:
+                                is_gpu_section = True
+                            if is_gpu_section and 'Evaluate' in line:
+                                time = float(line.split(':')[1].replace('ms', ''))
+                        elif 'tensorrt' in log_name:
+                            if 'GPU Compute' in line:
+                                is_gpu_section = True
+                            if is_gpu_section and 'mean' in line:
+                                time = float(line.split(':')[1].replace('ms', ''))
         lines.append('')
         with open(os.path.join(directory, 'renderTool.log'), 'a') as log_file:
             log_file.writelines(lines)
