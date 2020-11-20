@@ -167,7 +167,7 @@ if __name__ == '__main__':
             else:
                 template_copy['csv'] = case['csv']
             template_copy['tool'] = tool
-            template_copy['test_case'] = '{}, {}'.format(case['case'], tool)
+            template_copy['test_case'] = '{}_{}'.format(case['case'], tool)
             case_name = template_copy['test_case'].replace(', ', '_').replace(' ', '_')
             with open(os.path.join(args.output, case_name + core_config.CASE_REPORT_SUFFIX), 'w') as f:
                 f.write(json.dumps([template_copy], indent=4))
