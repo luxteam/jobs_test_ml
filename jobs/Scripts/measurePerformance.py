@@ -191,9 +191,10 @@ if __name__ == '__main__':
             cmd_script_path = os.path.join(args.output, '{}_winml.bat'.format(case_name))
             execute_case(args, case, 'winml', cmd_script, cmd_script_path)
 
-            cmd_line = case['cmd_line_tensorrt']
-            cmd_script = cmd_line.format(tool_path=args.tensorrtTool, onnx_path=onnx_path, csv_path=csv_path)
-            cmd_script_path = os.path.join(args.output, '{}_tensorrt.bat'.format(case_name))
-            execute_case(args, case, 'tensorrt', cmd_script, cmd_script_path)
+            if 'GeForce' in gpu:
+                cmd_line = case['cmd_line_tensorrt']
+                cmd_script = cmd_line.format(tool_path=args.tensorrtTool, onnx_path=onnx_path, csv_path=csv_path)
+                cmd_script_path = os.path.join(args.output, '{}_tensorrt.bat'.format(case_name))
+                execute_case(args, case, 'tensorrt', cmd_script, cmd_script_path)
 
     exit(0)
