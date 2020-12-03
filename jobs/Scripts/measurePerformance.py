@@ -160,7 +160,12 @@ if __name__ == '__main__':
         else:
             template['test_status'] = 'error'
 
-        for tool in ['rml', 'winml', 'tensorrt']:
+        if 'GeForce' in gpu:
+            tools = ['rml', 'winml', 'tensorrt']
+        else:
+            tools = ['rml', 'winml']
+
+        for tool in tools:
             template_copy = template.copy()
             if tool == 'rml':
                 template_copy['bin'] = case['bin']
