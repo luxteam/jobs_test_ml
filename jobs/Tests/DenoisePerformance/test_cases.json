@@ -25,7 +25,7 @@
         "onnx": "denoise_c3_hdr_gamma_2.5_640x800f16.onnx",
         "bin": "640x800x3_fp16.bin",
         "csv": "640x800x3_fp16.csv",
-        "cmd_line_rml": "{tool_path} -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,640,800,3 -t float16",
+        "cmd_line_rml": "{tool_path} --allow-float16 -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,640,800,3 -t float16",
         "cmd_line_winml": "{tool_path} -model {onnx_path} -Input {csv_path} -Tensor -Perf",
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     },
@@ -35,7 +35,7 @@
         "onnx": "denoise_c3_hdr_gamma_2.5_1040x1920f16.onnx",
         "bin": "1040x1920x3_fp16.bin",
         "csv": "1040x1920x3_fp16.csv",
-        "cmd_line_rml": "{tool_path} -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,1040,1920,3 -t float16",
+        "cmd_line_rml": "{tool_path} --allow-float16 -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,1040,1920,3 -t float16",
         "cmd_line_winml": "{tool_path} -model {onnx_path} -Input {csv_path} -Tensor -Perf",
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     }
