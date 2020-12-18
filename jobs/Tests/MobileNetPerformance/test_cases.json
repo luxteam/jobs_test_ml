@@ -15,7 +15,7 @@
         "onnx": "mobilenet_v2_1.0_224f16.onnx",
         "bin": "3x224x224_fp16.bin",
         "csv": "3x224x224_fp16.csv",
-        "cmd_line_rml": "{tool_path} -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,224,224,3 -t float16",
+        "cmd_line_rml": "{tool_path} --allow-float16 -b dml -m {onnx_path} -i {bin_path} -o out.bin -s 1,224,224,3 -t float16",
         "cmd_line_winml": "{tool_path} -model {onnx_path} -Input {csv_path} -Tensor -Perf",
         "cmd_line_tensorrt": "{tool_path} --onnx={onnx_path} --loadInputs={csv_path}"
     }
