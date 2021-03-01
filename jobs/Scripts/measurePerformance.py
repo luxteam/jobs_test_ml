@@ -151,6 +151,7 @@ if __name__ == '__main__':
         template = {}
         template['render_device'] = get_gpu()
         template['render_time'] = 0
+        template['number_of_tries'] = 0
         template['onnx'] = case['onnx']
         template['test_group'] = args.testType
         template['date_time'] = datetime.now().strftime(
